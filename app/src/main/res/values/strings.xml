@@ -1,0 +1,18 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Exam Mahabba</string>
+    <string name="welcome_title">Selamat Datang di</string>
+    <string name="app_subtitle">Platform Ujian Terkunci &amp; Terintegrasi</string>
+    <string name="label_student_name">Nama Lengkap Siswa</string>
+    <string name="label_student_class">Kelas / Rombel</string>
+    <string name="label_exam_token">Kode Token / URL Ujian</string>
+    <string name="hint_name">Contoh: Ahmad Rizky</string>
+    <string name="hint_class">Contoh: X MIPA 1</string>
+    <string name="hint_token">Contoh: BIO-892 atau link form</string>
+    <string name="btn_start_exam">Mulai Ujian</string>
+    <string name="pin_dialog_title">Buka Kunci Pengawas</string>
+    <string name="pin_dialog_desc">Masukkan PIN 4 digit pengawas untuk membuka aplikasi:</string>
+    <string name="cheat_warning_title">PERINGATAN PELANGGARAN!</string>
+    <string name="cheat_warning_msg">Anda terdeteksi keluar dari layar ujian!</string>
+    <string name="lockdown_title">LAYAR DIKUNCI PERMANEN</string>
+    <string name="lockdown_msg">Batas pelanggaran (3x) telah terlampaui. Silakan panggil pengawas di ruang ujian untuk membuka kunci menggunakan PIN.</string>
+</resources>

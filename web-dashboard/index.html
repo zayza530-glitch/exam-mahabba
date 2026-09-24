@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Mahabba • Dashboard Pengawas Ujian</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgPrimary: '#0F172A',
+                        bgCard: '#1E293B',
+                        bgInput: '#334155',
+                        borderSoft: '#475569',
+                        accentTeal: '#14B8A6',
+                        accentTealLight: '#2DD4BF',
+                        accentSage: '#10B981',
+                        dangerRed: '#EF4444',
+                        warningYellow: '#FBBF24',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0F172A;
+            color: #F8FAFC;
+        }
+        .pulse-danger {
+            animation: pulse-glow 1.5s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0F172A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navbar Atas -->
+    <header class="border-b border-borderSoft/60 bg-bgCard/80 backdrop-blur-md sticky top-0 z-50 px-6 py-3.5 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-accentTeal to-accentSage flex items-center justify-center font-bold text-bgPrimary shadow-lg shadow-accentTeal/20">
+                EM
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                    Exam Mahabba
+                    <span class="text-[11px] font-semibold bg-accentTeal/20 text-accentTealLight px-2 py-0.5 rounded-full border border-accentTeal/30">Pengawas v1.0</span>
+                </h1>
+                <p class="text-xs text-slate-400">Pusat Kendali &amp; Pengawasan Ujian Digital</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center gap-2 bg-bgInput/60 border border-borderSoft px-3 py-1.5 rounded-xl">
+                <span class="w-2.5 h-2.5 rounded-full bg-accentSage animate-pulse"></span>
+                <span class="text-xs font-medium text-slate-300">Server Terhubung: <strong>Online</strong></span>
+            </div>
+            <div class="bg-bgInput/80 border border-borderSoft px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs">
+                <i data-lucide="key" class="w-3.5 h-3.5 text-accentTeal"></i>
+                <span class="text-slate-400">PIN Darurat:</span>
+                <strong class="text-accentTealLight font-mono tracking-widest text-sm">2222</strong>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1600px] w-full mx-auto">
+        
+        <!-- KOLOM KIRI: Panel Pengaturan & Kontrol Ujian (4 Cols) -->
+        <section class="lg:col-span-4 space-y-6">
+            
+            <!-- Card Buat Sesi Ujian -->
+            <div class="bg-bgCard border border-borderSoft rounded-2xl p-5 shadow-xl relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-accentTeal/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-bold text-slate-200 flex items-center gap-2 text-sm">
+                        <i data-lucide="sliders" class="w-4 h-4 text-accentTeal"></i>
+                        Konfigurasi Sesi Ujian
+                    </h2>
+                    <span id="sessionStatusBadge" class="text-xs px-2.5 py-1 rounded-full bg-slate-700 text-slate-300 font-medium">Draft</span>
+                </div>
+
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">Mata Pelajaran &amp; Kelas</label>
+                        <input type="text" id="inputSubject" value="Biologi - Kelas X MIPA 1" placeholder="Contoh: Biologi X MIPA" class="w-full bg-bgInput border border-borderSoft rounded-xl px-3.5 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-accentTeal transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">Link Google Form Soal</label>
+                        <input type="url" id="inputFormUrl" value="https://docs.google.com/forms/d/e/1FAIpQLSc-contoh/viewform" placeholder="Tempel link https://forms.gle/..." class="w-full bg-bgInput border border-borderSoft rounded-xl px-3.5 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-accentTeal transition">
+                    </div>
+
+                    <button id="btnGenerateToken" onclick="generateExamSession()" class="w-full bg-gradient-to-r from-accentTeal to-accentSage hover:opacity-95 text-bgPrimary font-bold py-2.5 px-4 rounded-xl shadow-lg shadow-accentTeal/20 transition flex items-center justify-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        Terbitkan Token &amp; QR Code
+                    </button>
+                </div>
+
+                <!-- Hasil Token & QR Code Box -->
+                <div id="tokenResultBox" class="mt-5 p-4 rounded-xl bg-bgPrimary/60 border border-borderSoft/80 flex items-center gap-4">
+                    <div id="qrcode" class="p-1.5 bg-white rounded-lg shadow shrink-0"></div>
+                    <div class="flex-1">
+                        <p class="text-xs text-slate-400 font-medium">KODE TOKEN SISWA:</p>
+                        <div class="text-2xl font-black text-accentTealLight font-mono tracking-wider" id="displayToken">BIO-892</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Siswa cukup ketik kode ini atau scan QR di aplikasi HP.</p>
+                    </div>
+                </div>
+
+                <!-- Tombol Kontrol Massal -->
+                <div class="mt-5 pt-4 border-t border-borderSoft/60 grid grid-cols-2 gap-3">
+                    <button id="btnStartAll" onclick="startExamAll()" class="bg-accentSage/20 hover:bg-accentSage/30 border border-accentSage/40 text-accentSage py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                        <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                        Mulai Ujian Serentak
+                    </button>
+                    <button id="btnLockAll" onclick="lockExamAll()" class="bg-dangerRed/20 hover:bg-dangerRed/30 border border-dangerRed/40 text-dangerRed py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                        Kunci Semua Layar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel Live Feed Log Pelanggaran Real-time -->
+            <div class="bg-bgCard border border-borderSoft rounded-2xl p-5 shadow-xl">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-bold text-slate-200 flex items-center gap-2 text-sm">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-warningYellow"></i>
+                        Log Pelanggaran Real-Time
+                    </h2>
+                    <span id="logCounter" class="text-[11px] bg-bgInput px-2 py-0.5 rounded-full text-slate-300">3 Kejadian</span>
+                </div>
+                
+                <div id="logContainer" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1 text-xs">
+                    <!-- Sample Log Item -->
+                    <div class="p-2.5 rounded-xl bg-dangerRed/10 border border-dangerRed/20 flex items-start gap-2.5">
+                        <span class="text-dangerRed mt-0.5">⚠️</span>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-center">
+                                <strong class="text-slate-200">Muhammad Farhan</strong>
+                                <span class="text-[10px] text-slate-500">10:42:15</span>
+                            </div>
+                            <p class="text-slate-400 mt-0.5 text-[11px]">Terdeteksi menekan tombol Home / Pindah Aplikasi (Peringatan ke-1)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- KOLOM KANAN: Grid Monitoring Status Siswa (8 Cols) -->
+        <section class="lg:col-span-8 flex flex-col space-y-4">
+            
+            <!-- Bar Pencarian & Statistik Ringkas -->
+            <div class="bg-bgCard border border-borderSoft rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 bg-bgInput/80 border border-borderSoft px-3 py-1.5 rounded-xl">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400"></i>
+                        <input type="text" id="searchStudent" onkeyup="filterStudents()" placeholder="Cari nama siswa..." class="bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none w-36 sm:w-48">
+                    </div>
+                    <select id="filterStatus" onchange="filterStudents()" class="bg-bgInput/80 border border-borderSoft text-xs text-slate-300 rounded-xl px-2.5 py-1.5 focus:outline-none">
+                        <option value="ALL">Semua Status</option>
+                        <option value="SAFE">Sedang Mengerjakan (Aman)</option>
+                        <option value="WARNING">Ada Pelanggaran</option>
+                        <option value="LOCKED">Terkunci Permanen</option>
+                    </select>
+                </div>
+
+                <!-- Statistik Siswa -->
+                <div class="flex items-center gap-4 text-xs">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-accentSage"></span>
+                        <span class="text-slate-400">Aman: <strong class="text-slate-200" id="statSafe">28</strong></span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-warningYellow"></span>
+                        <span class="text-slate-400">Peringatan: <strong class="text-slate-200" id="statWarning">2</strong></span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-dangerRed"></span>
+                        <span class="text-slate-400">Terkunci: <strong class="text-slate-200" id="statLocked">1</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid Kartu Siswa -->
+            <div id="studentsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto max-h-[750px] pr-1">
+                <!-- Diisi secara dinamis via JavaScript -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Modal Konfirmasi Reset Siswa -->
+    <div id="resetModal" class="fixed inset-0 bg-bgPrimary/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-bgCard border border-borderSoft rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="unlock" class="w-5 h-5 text-accentTeal"></i>
+                Buka Kunci Siswa
+            </h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                Anda akan mereset status peringatan untuk <strong id="resetStudentName" class="text-slate-200">Siswa</strong>. HP siswa akan diizinkan kembali melanjutkan ujian.
+            </p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeResetModal()" class="px-3 py-1.5 rounded-xl border border-borderSoft text-xs text-slate-300 hover:bg-bgInput">Batal</button>
+                <button onclick="confirmResetStudent()" class="px-4 py-1.5 rounded-xl bg-accentTeal hover:bg-accentTealLight text-bgPrimary font-bold text-xs transition">Buka Kunci</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Contoh Siswa Ujian Kelas
+        let students = [
+            { id: 1, name: "Ahmad Rizky Pratama", class: "X MIPA 1", battery: 94, wifi: "Bagus", strikes: 0, status: "SAFE" },
+            { id: 2, name: "Anisa Putri Maharani", class: "X MIPA 1", battery: 82, wifi: "Bagus", strikes: 0, status: "SAFE" },
+            { id: 3, name: "Budi Santoso", class: "X MIPA 1", battery: 45, wifi: "Sedang", strikes: 1, status: "WARNING", lastAction: "Membuka Notifikasi" },
+            { id: 4, name: "Cantika Dewi", class: "X MIPA 1", battery: 78, wifi: "Bagus", strikes: 0, status: "SAFE" },
+            { id: 5, name: "Daffa Alfarizi", class: "X MIPA 1", battery: 60, wifi: "Bagus", strikes: 0, status: "SAFE" },
+            { id: 6, name: "Muhammad Farhan", class: "X MIPA 1", battery: 18, wifi: "Bagus", strikes: 3, status: "LOCKED", lastAction: "Layar Terkunci (3x Keluar)" },
+            { id: 7, name: "Nabila Syakieb", class: "X MIPA 1", battery: 89, wifi: "Bagus", strikes: 0, status: "SAFE" },
+            { id: 8, name: "Rendi Ramadhan", class: "X MIPA 1", battery: 73, wifi: "Bagus", strikes: 2, status: "WARNING", lastAction: "Deteksi Split Screen" },
+            { id: 9, name: "Siti Rahmawati", class: "X MIPA 1", battery: 95, wifi: "Bagus", strikes: 0, status: "SAFE" },
+        ];
+
+        let targetResetStudentId = null;
+
+        function renderStudents() {
+            const grid = document.getElementById('studentsGrid');
+            const search = document.getElementById('searchStudent').value.toLowerCase();
+            const filter = document.getElementById('filterStatus').value;
+            grid.innerHTML = '';
+
+            let safeCount = 0, warnCount = 0, lockedCount = 0;
+
+            students.forEach(s => {
+                if (s.status === 'SAFE') safeCount++;
+                if (s.status === 'WARNING') warnCount++;
+                if (s.status === 'LOCKED') lockedCount++;
+
+                // Filter logic
+                if (filter !== 'ALL' && s.status !== filter) return;
+                if (search && !s.name.toLowerCase().includes(search)) return;
+
+                let cardBorder = 'border-borderSoft';
+                let statusBadge = `<span class="bg-accentSage/20 text-accentSage border border-accentSage/30 text-[10px] px-2 py-0.5 rounded-full font-bold">Aman</span>`;
+                let pulseClass = '';
+
+                if (s.status === 'WARNING') {
+                    cardBorder = 'border-warningYellow/60 bg-warningYellow/5';
+                    statusBadge = `<span class="bg-warningYellow/20 text-warningYellow border border-warningYellow/40 text-[10px] px-2 py-0.5 rounded-full font-bold">${s.strikes}x Pelanggaran</span>`;
+                } else if (s.status === 'LOCKED') {
+                    cardBorder = 'border-dangerRed/80 bg-dangerRed/10 pulse-danger';
+                    statusBadge = `<span class="bg-dangerRed/30 text-dangerRed border border-dangerRed/50 text-[10px] px-2 py-0.5 rounded-full font-bold">Terkunci (3x)</span>`;
+                    pulseClass = 'animate-bounce';
+                }
+
+                const card = document.createElement('div');
+                card.className = `bg-bgCard border ${cardBorder} rounded-2xl p-4 shadow-lg transition hover:border-accentTeal/50 flex flex-col justify-between`;
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-100">${s.name}</h4>
+                                <p class="text-[11px] text-slate-400">${s.class}</p>
+                            </div>
+                            ${statusBadge}
+                        </div>
+                        <div class="flex items-center gap-3 text-xs text-slate-400 my-2">
+                            <span class="${s.battery < 20 ? 'text-dangerRed font-bold' : ''}">🔋 ${s.battery}%</span>
+                            <span>📶 ${s.wifi}</span>
+                        </div>
+                        ${s.lastAction ? `<p class="text-[11px] text-dangerRed font-medium mt-1">⚠️ ${s.lastAction}</p>` : ''}
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-borderSoft/60 flex items-center justify-between">
+                        <span class="text-[11px] text-slate-500">PIN Darurat: <strong class="text-slate-300">2222</strong></span>
+                        ${s.strikes > 0 ? `
+                            <button onclick="openResetModal(${s.id}, '${s.name}')" class="text-xs bg-bgInput hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg transition font-medium">
+                                Reset Kunci
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('statSafe').innerText = safeCount;
+            document.getElementById('statWarning').innerText = warnCount;
+            document.getElementById('statLocked').innerText = lockedCount;
+            lucide.createIcons();
+        }
+
+        function filterStudents() {
+            renderStudents();
+        }
+
+        function generateExamSession() {
+            const token = "MAH-" + Math.floor(100 + Math.random() * 900);
+            document.getElementById('displayToken').innerText = token;
+            
+            // Generate QR Code
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: token,
+                width: 72,
+                height: 72,
+                colorDark : "#0F172A",
+                colorLight : "#FFFFFF",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            document.getElementById('sessionStatusBadge').innerText = "Aktif";
+            document.getElementById('sessionStatusBadge').className = "text-xs px-2.5 py-1 rounded-full bg-accentSage/20 text-accentSage border border-accentSage/30 font-medium";
+            alert("Sesi Ujian Baru Terbit! Siswa bisa menggunakan Token: " + token);
+        }
+
+        function startExamAll() {
+            alert("Perintah Terkirim! Semua HP siswa di kelas mulai memuat lembar ujian Google Form secara serentak.");
+        }
+
+        function lockExamAll() {
+            if(confirm("Apakah Anda yakin ingin mengunci layar semua siswa sekarang?")) {
+                alert("Semua layar HP siswa berhasil dikunci!");
+            }
+        }
+
+        function openResetModal(id, name) {
+            targetResetStudentId = id;
+            document.getElementById('resetStudentName').innerText = name;
+            document.getElementById('resetModal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.add('hidden');
+        }
+
+        function confirmResetStudent() {
+            if (targetResetStudentId) {
+                const s = students.find(x => x.id === targetResetStudentId);
+                if (s) {
+                    s.strikes = 0;
+                    s.status = "SAFE";
+                    delete s.lastAction;
+                    renderStudents();
+                }
+            }
+            closeResetModal();
+        }
+
+        // Jalankan saat load awal
+        window.onload = function() {
+            lucide.createIcons();
+            generateExamSession();
+            renderStudents();
+        };
+    </script>
+</body>
+</html>

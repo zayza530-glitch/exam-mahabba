@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Soft Modern Palette - Exam Mahabba -->
+    <color name="bg_primary">#0F172A</color>        <!-- Dark Slate Deep -->
+    <color name="bg_card">#1E293B</color>           <!-- Soft Slate Surface -->
+    <color name="bg_card_translucent">#D91E293B</color>
+    
+    <color name="accent_teal">#14B8A6</color>       <!-- Gentle Teal -->
+    <color name="accent_teal_light">#2DD4BF</color>
+    <color name="accent_sage">#10B981</color>       <!-- Calm Sage Green -->
+    
+    <color name="text_primary">#F8FAFC</color>      <!-- Clean Crisp White -->
+    <color name="text_secondary">#94A3B8</color>    <!-- Muted Slate -->
+    <color name="text_muted">#64748B</color>
+    
+    <!-- Status & Alerts -->
+    <color name="warning_yellow">#FBBF24</color>
+    <color name="danger_red">#EF4444</color>
+    <color name="danger_glow">#40EF4444</color>
+    
+    <color name="input_bg">#334155</color>
+    <color name="border_soft">#475569</color>
+</resources>
